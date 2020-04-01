@@ -1,0 +1,56 @@
+// 求一个数，能使a，b与之相加后，成为素数，并且a与b之间没有其他的素数
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <memory.h>
+const int MAX_VALUE = 2e7;
+static int primes[MAX_VALUE];
+static char is_primes[MAX_VALUE + 1];
+int createPrimeTable()
+{
+	int size = 0;
+	memset(is_primes, 1, sizeof(is_primes));
+	int s = sqrt((double)MAX_VALUE) + 1;
+	for(int i = 2; i <= s; i++)
+	{
+		if(is_primes[i])
+			for(int j = 2; j <= MAX_VALUE / i; j++)
+			{
+				is_primes[i * j] = 0;
+			}
+	}
+	for(int i = 2; i <= MAX_VALUE; i++)
+		if(is_primes[i])
+			primes[size++] = i;
+	is_primes[0] = is_primes[1] = 0;
+	return size;
+}
+int main()
+{
+	int count, kase = 0;
+	scanf("%d", &count);
+	int size = createPrimeTable();
+	while(count--)
+	{
+		int a, b;
+		scanf("%d%d", &a, &b);
+		if(a > b)
+		{
+			a = a ^ b; b = a ^ b; a = a ^ b;
+		}
+		int prime = -1;
+		for(int i = 0; i < size - 1; i++)
+		{
+			if(is_primes[i] >= a && is_primes[i + 1] >= b)
+			{
+				if((is_primes[i] - a) == (is_primes[i + 1] - b))
+				{
+					prime = primes[i] - a;
+					break;
+				}
+			} 
+		}
+		printf("Case %d: %d\n", ++kase, prime);
+	}
+	return 0;
+}

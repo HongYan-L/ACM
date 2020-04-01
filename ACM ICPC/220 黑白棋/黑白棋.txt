@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <string.h>
+char Checkerboard[8][8];
+char Current_piece, command[8];
+int Number_of_pieces[2] = {0,0};
+int Runx[8] = {0,0,1,-1,1,-1,1,-1};
+int Runy[8] = {1,-1,0,0,1,-1,-1,1};
+bool Flag, L_Refresh;
+
+void Exchange_player()
+{
+    if(Current_piece == 'W') Current_piece = 'B';
+    if(Current_piece == 'B') Current_piece = 'W';
+}
+
+bool judge(int i, int j, int x, int y, bool Whether)
+{
+    int a = i + 1, b = j + 1, flag = 0;
+    while((i += x) < 8 && (j += y) < 8 && i >= 0 && j >= 0)
+    {
+        if (Checkerboard[i][j] == '-') break;
+        if (Checkerboard[i][j] ==Current_piece)
+        {
+            if(!flag) break;
+            if(Whether)
+            {
+                if(Flag)printf(" ");
+                printf("(%d,%d)",a,b);
+            }
+            if(!Flag) Flag = true;
+            return true;
+        }
+        flag++;
+    }
+    return false;
+}
+
+void change(int i, int j, int x, int y)
+{
+    int n = 0;
+    while(Checkerboard[i+=x][j+=y] != Current_piece)
+    {
+        Checkerboard[i][j] = Current_piece;n++;
+    }
+    if(Current_piece == 'W')
+    {
+        Number_of_pieces[0] += n;
+        Number_of_pieces[1]-=n;
+    }
+    if(Current_piece == 'B')
+    {
+        Number_of_pieces[0] -= n;
+        Number_of_pieces[1] += n;
+    }
+}
+
+void L(bool Whether)
+{
+    L_Refresh = 1;Flag = 0;
+    for(int i = 0 ; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            if(Checkerboard[i][j] != '-') continue;
+            for(int x=0;x<8;x++)
+            {
+                if(judge(i,j,Runx[x],Runy[x],Whether))  break;
+            }
+        }
+    }
+    if (Whether)Flag ? printf("\n") : printf("No legal move.\n");
+}
+
+void M()
+{
+    char i = command[1] - '0', j = command[2] - '0';
+    if(!L_Refresh) L(0);
+    if(!Flag) Exchange_player();
+    for(int x = 0; x < 8; x++)
+    {
+        if(judge(i,j,Runx[x],Runy[x],0)) change(i,j,Runx[x],Runy[x]);
+    }
+    Current_piece == 'W'? Number_of_pieces[0] += 1 : Number_of_pieces[1] += 1;
+
+    Checkerboard[i][j] = Current_piece;
+    Exchange_player();
+    L_Refresh = 0;
+    printf("Black - %2d White - %2d\n", Number_of_pieces[1], Number_of_pieces[0]);
+}
+
+void Q()
+{
+    for(int i = 0; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            printf("%c",Checkerboard[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main()
+{
+    int n;
+    scanf("%d", &n);
+    while (n--)
+    {
+        for(int i = 0; i < 8; ++i)
+            scanf("%s", Checkerboard[i]);
+        scanf("\n%c", &Current_piece);
+        L_Refresh = 0;
+        Number_of_pieces[0] = Number_of_pieces[1] = 0;
+        for (int i = 0; i < 8; ++i)
+        {
+            for (int j = 0; j < 8; ++j)
+            {
+                if(Checkerboard[i][j] == 'W') Number_of_pieces[0]++;
+                else if(Checkerboard[i][j] == 'B') Number_of_pieces[1]++;
+            }
+        }
+        while(scanf("%s",command))
+        {
+            if(command[0]=='L') L(true);
+            else if(command[0]=='M') M();
+            else if(command[0]=='Q'){Q();break;}
+        }
+        if(n)
+            printf("\n");
+    }
+    return 0;
+}

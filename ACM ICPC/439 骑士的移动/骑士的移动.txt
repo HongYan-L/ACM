@@ -1,0 +1,57 @@
+#include<iostream>
+#include<queue>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+const int maxn = 10;
+struct Node{
+	int x;
+	int y;
+	Node(int x = 0, int y = 0) : x(x), y(y) {}
+};
+int qipan[maxn][maxn];
+const int dx[] = {1, 2, 2, 1, -1, -2, -2, -1};
+const int dy[] = {2, 1, -1, -2, -2, -1, 1, 2};
+bool check(int x, int y)
+{
+	return (x > 0 && x < 9 && y > 0 && y < 9);
+}
+int x1, y1, x2, y2;
+char xx1, xx2;
+void bfs()
+{
+	queue<Node> q;
+	q.push(Node(x1, y1));
+	while(!q.empty())
+	{
+		Node u = q.front();
+		q.pop();
+		if(u.x == x2 && u.y == y2) return;
+		for(int i = 0; i < 8; i++)
+		{
+			int nx = u.x + dx[i];
+			int ny = u.y + dy[i];
+			if(!check(nx, ny)) continue;
+			if(qipan[nx][ny] < 0)
+			{
+				qipan[nx][ny] = qipan[u.x][u.y] + 1;
+				q.push(Node(nx, ny));
+			}
+		}
+	}
+}
+int main()
+{
+	while(scanf("%c%d %c%d", &xx1, &y1, &xx2, &y2) != EOF)
+	{
+		getchar();
+		x1 = xx1 - 'a' + 1;
+		x2 = xx2 - 'a' + 1;
+		memset(qipan, -1, sizeof(qipan));
+		qipan[x1][y1] = 0;
+		bfs();
+		printf("To get from %c%d to %c%d takes %d knight moves.\n", xx1, y1, xx2, y2, qipan[x2][y2]);
+	}
+	return 0;
+}

@@ -1,0 +1,117 @@
+// UVa1331 Minimax三角剖分
+//刘如家
+＃包括< cstdio >
+＃包括< cstdlib >
+＃包括< CMATH >
+＃包括<：字符串>
+＃包括<矢量>
+＃包括<队列>
+＃包括<算法>
+使用 名称空间 std ;
+
+const  double eps = 1e-10 ;
+int  dcmp（double x）{
+  if（fabs（x）<eps）返回 0 ; 否则 返回 x < 0？- 1：1 ;
+}
+
+结构 点 {
+  x，y的两倍
+  点（double x = 0，double y = 0）：x（x），y（y）{}
+};
+
+typedef  点向量；
+
+向量运算符 +（const Vector＆A，const Vector＆B）{ 返回 向量（A. x + B。x，A. y + B。y）; }
+向量操作者 - （const的 点＆A，常量 点＆B）{ 返回 向量（A. X -B。X，A. y -B。?）; }
+向量运算符 *（const Vector＆A，double p）{ return  Vector（A. x * p，A. y * p）; }
+
+布尔 运算符 <（const  Point＆a，const  Point＆b）{
+  返回一个。x <b。x || （一个X ==湾X &&一个。y <B。?）;
+}
+
+布尔 运算符 ==（const  Point＆a，const  Point＆b）{
+  返回 DCMP（一个。X -b。X ==）0 && DCMP（一个。y -b。?）== 0 ;
+}
+
+double  Dot（const Vector＆A，const Vector＆B）{ return A. x * B。x + A。y * B。? ; }
+double  Cross（const Vector＆A，const Vector＆B）{ return A. x * B。y - A。y * B。x ; }
+double  Length（Vector A）{ return  sqrt（Dot（A，A））; }
+
+bool  SegmentProperIntersection（const  Point＆a1，const  Point＆a2，const  Point＆b1，const  Point＆b2）{
+  双精度c1 = 交叉（a2-a1，b1-a1），c2 = 交叉（a2-a1，b2-a1），
+  c3 = 十字（b2-b1，a1-b1），c4 = 十字（b2-b1，a2-b1）;
+  返回 dcmp（c1）* dcmp（c2）< 0 && dcmp（c3）* dcmp（c4）< 0 ;
+}
+
+bool  OnSegment（const  Point＆p，const  Point＆a1，const  Point＆a2）{
+  返回 DCMP（交叉（A1-P，A2-P））== 0 && DCMP（点（A1-P，A2-P））< 0 ;
+}
+
+typedef vector < 点 >多边形;
+
+int  isPointInPolygon（const  Point＆p，const Polygon＆poly）{
+  int n =多边形。大小（）;
+  int wn = 0 ;
+  for（int i = 0 ; i <n; i ++）{
+    const  Point＆p1 = poly [i];
+    const  Point＆p2 = poly [（i + 1）％n];
+    如果（P1 == p || P2 == p || OnSegment（P，P1，P2））返回 - 1 ; //在边界上
+    INT K = DCMP（交叉（P2-P1，P-P1））;
+    INT D1 = DCMP（P1。y - P。?）;
+    INT D2 = DCMP（P2。y - P。?）;
+    如果（k> 0 && d1 <= 0 && d2> 0）wn ++;
+    如果（k < 0 && d2 <= 0 && d1> 0）wn--;
+  }
+  如果（wn！= 0）返回 1 ; //内部
+  返回 0 ; //外部
+}
+
+const  int maxn = 100 + 5 ;
+
+bool  isDiagonal（const Polygon＆poly，int a，int b）{
+  int n =多边形。大小（）;
+  对于（int i = 0 ; i <n; i ++）
+    如果（i！= a && i！= b && OnSegment（poly [i]，poly [a]，poly [b]））返回 false；//中间不能有其他点
+  对于（int i = 0 ; i <n; i ++）
+    if（SegmentProperIntersection（poly [i]，poly [[i + 1 ]％n]，poly [a]，poly [b]）返回 false ; //不能和上方的边规范相交
+  中点 =（poly [a] + poly [b]）* 0.5 ;
+  return（isPointInPolygon（midp，poly）== 1）; //整条线段在十年内
+}
+
+const  double INF = 1e9 ;
+双重 d [maxn] [maxn];
+
+双重 求解（const Polygon＆poly）{
+  int n =多边形。大小（）;
+
+  对于（int i = 0 ; i <n; i ++）
+    对于（int j = 0 ; j <n; j ++）d [i] [j] = -1 ;
+  对于（int i = n- 2 ; i> = 0 ; i--）
+    对于（int j = i + 1 ; j <n; j ++）{
+      如果（i + 1 == j）d [i] [j] = 0 ;
+      否则 如果（（I ==！0 &&?== N- 1）&&！isDiagonal d [i] [j] = INF（聚，I，J））;
+      其他 {
+        d [i] [j] = INF；
+        对于（int k = i + 1 ; k <j; k ++）{
+          double m = max（d [i] [k]，d [k] [j]）;
+          两倍的面积= 晶圆厂（十字（poly [j] -poly [i]，poly [k] -poly [i]））/ 2.0 ; //三角形ijk
+          m = 最大（m，面积）；
+          d [i] [j] = min（d [i] [j]，m）;
+        }
+      }
+    }
+  返回 d [ 0 ] [n- 1 ];
+}
+
+int  main（）{
+  int T，n;
+  scanf（“％d ”，＆T）;
+  而（T--）{
+    scanf（“％d ”，＆n）;
+    x，y的两倍
+    多边形poly;
+    for（int i = 0 ; i <n; i ++）{ scanf（“％lf％lf ”，＆x，＆y）; 聚。push_back（Point（x，y））; }
+    printf（“％.1lf \ n ”，解决（poly））;
+  }
+  返回 0 ;
+}

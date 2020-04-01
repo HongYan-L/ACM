@@ -1,0 +1,88 @@
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+const int max_ans = 13;
+
+int n;
+int q[max_ans + 1];
+
+bool dfs(int depth, int max_depth)
+{
+	q[0] = 1;
+	if(q[depth] == n) return true;
+	if(depth == max_depth) return false;
+	int maxv = q[0];
+	for(int i = 1; i <= depth; i++) maxv = max(maxv, q[i]);
+	if((maxv << (max_depth - depth)) < n) return false;
+	for(int i = depth; i >= 0; i--)
+	{
+		q[depth + 1] = q[depth] + q[i];
+		if(dfs(depth + 1, max_depth)) return true;
+		q[depth + 1] = q[depth] - q[i];
+		if(dfs(depth + 1, max_depth)) return true;
+	}
+	return false;
+}
+
+int main()
+{
+	while(scanf("%d", &n) == 1 && n)
+	{
+		int depth = 0;
+		while(depth < max_ans && !dfs(0, depth)) depth++;
+		printf("%d\n", depth);
+	}
+	return 0;
+}
+
+
+
+#include <cstring>
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+const int max_depth = 13;
+
+int n, a[max_depth + 1];
+
+bool dfs(int d, int depth)
+{
+	if(a[d] == n) return true;
+	if(d == depth) return false;
+	int maxv = a[0];
+	for(int i = 1; i <= d; i++) maxv = max(maxv, a[i]);
+	if((maxv << (depth - d)) < n) return false;
+	for(int i = d; i >= 0; i--)
+	{
+		a[d + 1] = a[d] + a[i];
+		if(dfs(d + 1, depth)) return true;
+		a[d + 1] = a[d] - a[i];
+		if(dfs(d + 1, depth)) return true;
+	}
+	return false;
+}
+
+int solve(int n)
+{
+	if(n == 1) return 0;
+	a[0] = 1;
+	for(int depth = 1; depth < max_depth; depth++)
+	{
+		if(dfs(0, depth)) return depth;
+	}
+	return max_depth;
+}
+
+int main()
+{
+	while(scanf("%d", &n) == 1 && n)
+	{
+		printf("%d\n", solve(n));
+	}
+	return 0;
+}

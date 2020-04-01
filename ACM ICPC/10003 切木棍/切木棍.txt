@@ -1,0 +1,32 @@
+// UVa10003切割棒
+//刘如家
+//算法：设[i] [j]为切割小木棍i?j的最优费用，则d [i] [j] = min {d [i] [k] + d [k] [j] } + a [j] -a [i]。最后的a [j] -a [i]是第一刀的费用。然后放置i?k和k?j两部分。
+＃包括< cstdio >
+＃包括<：字符串>
+使用 名称空间 std ;
+
+const  int maxn = 50 + 5 ;
+int n，L，a [maxn]，vis [maxn] [maxn]，d [maxn] [maxn];
+
+int  dp（int i，int j）{
+  如果（i> = j- 1）返回 0 ;
+  如果（vis [i] [j]）返回 d [i] [j]；
+  vis [i] [j] = 1 ;
+  int＆ans = d [i] [j];
+  ans = -1 ;
+  对于（int k = i + 1 ; k <= j- 1 ; k ++）{
+    int v = dp（i，k）+ dp（k，j）+ a [j]-a [i];
+    if（ans < 0 || v <ans）ans = v;
+  }
+  返回 ans;
+}
+
+int  main（）{
+  而（scanf（“％d％d ”，＆L，＆n）== 2 && L）{
+    for（int i = 1 ; i <= n; i ++）scanf（“％d ”，＆a [i]）;
+    a [ 0 ] = 0 ; a [n + 1 ] = L；
+    memset（vis，0，sizeof（vis））;
+    printf（“最小切割为％d。\ n ”，dp（0，n + 1））;
+  }
+  返回 0 ;
+}

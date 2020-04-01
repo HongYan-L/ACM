@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<algorithm> //调用swap,sort函数 
+using namespace std;
+typedef struct   //定义关于宽高的结构体 
+{
+	int w,h;
+}box;
+bool cmp(box a,box b) //定义了cmp，用于比大小排序 
+{
+	return a.w<b.w||(a.w==b.w&&a.h<b.h);
+}
+int main()
+{
+	box b[6];
+	while(scanf("%d %d",&b[0].w,&b[0].h)!=EOF) //输入第一组宽高 
+	{
+		if(b[0].w>b[0].h) //如果宽大于高，交换，便于后续6组进行排序 
+		    swap(b[0].w,b[0].h);
+		int flag=1;
+	    for(int i=1;i<=5;i++)  //输入剩下5组 
+	    {
+	    	scanf("%d %d",&b[i].w,&b[i].h);
+	    	if(b[i].w>b[i].h)
+		        swap(b[i].w,b[i].h);
+		}
+		sort(b,b+6,cmp); //6组进行字典序排序 
+		for(int i=0;i<5;i+=2)
+		{
+			if(b[i].w!=b[i+1].w||b[i].h!=b[i+1].h) //排序后，一定要有两组数字一样，不然不能构成长方体 
+			{
+				flag=0;
+				break;
+			}
+		}
+		if(b[0].w!=b[2].w||b[0].h!=b[4].w||b[2].h!=b[4].h) //举个例子就知道了，比如2 3，2 3，2 4，2 4，3 4，3 4 
+			flag=0;
+		printf(flag?"POSSIBLE\n":"IMPOSSIBLE\n");
+	}
+	return 0; 
+}

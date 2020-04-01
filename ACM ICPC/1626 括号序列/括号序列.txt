@@ -1,0 +1,74 @@
+// LA2451支架顺序
+//刘如家
+//算法：形如（S）或[S]，转移到d（S），然后拆分AB，转移到d（A）+ d（B）。注意（S，[S，）S之类全部属于第二种转移。
+//注意输入有空行。
+//本程序是递推解法
+＃包括< cstdio >
+＃包括<：字符串>
+＃包括<算法>
+使用 名称空间 std ;
+
+const  int maxn = 100 + 5 ;
+字符 S [maxn];
+int n，d [maxn] [maxn];
+
+bool  match（char a，char b）{
+  return（a == '（' && b == '）'）|| （a == ' [ ' && b == ' ] '）;
+}
+
+无效 dp（）{
+  for（int i = 0 ; i <n; i ++）{
+    d [i + 1 ] [i] = 0 ;
+    d [i] [i] = 1 ;
+  }
+  对于（int i = n- 2 ; i> = 0 ; i--）
+    对于（int j = i + 1 ; j <n; j ++）{
+      d [i] [j] = n;
+      if（match（S [i]，S [j]））d [i] [j] = min（d [i] [j]，d [i + 1 ] [j- 1 ]）;
+      对于（int k = i; k <j; k ++）
+        d [i] [j] = min（d [i] [j]，d [i] [k] + d [k + 1 ] [j]）;
+    }
+}
+
+void  print（int i，int j）{
+  如果（i> j）返回；
+  如果（i == j）{
+    if（S [i] == '（' || S [i] == '）'）printf（“（）”）;
+    else  printf（“ [] ”）;
+    回报 ;
+  }
+  int ans = d [i] [j];
+  if（match（S [i]，S [j]）&& ans == d [i + 1 ] [j- 1 ]）{
+    printf（“％c ”，S [i]）; 打印（i + 1，j- 1）; printf（“％c ”，S [j]）;
+    回报 ;
+  }
+  对于（int k = i; k <j; k ++）
+    如果（ans == d [i] [k] + d [k + 1 ] [j]）{
+      打印（i，k）; 打印（k + 1，j）;
+      回报 ;
+    }
+}
+
+空隙 的readline（字符 * S）{
+  fgets（S，maxn，stdin）;
+}
+
+int  main（）{
+  int T;
+
+  readline（S）;
+  sscanf（S，“％d ”，＆T）;
+  readline（S）;
+
+  而（T--）{
+    readline（S）;
+    n = strlen（S）-1；
+    memset（d，-1，sizeof（d））;
+    dp（）;
+    打印（0，n- 1）;
+    printf（“ \ n ”）;
+    如果（T）printf（“ \ n ”）;
+    readline（S）;
+  }
+  返回 0 ;
+}

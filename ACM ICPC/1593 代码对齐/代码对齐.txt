@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+const int maxh = 1000 + 10;
+const int maxw = 180 + 10;
+
+vector<string> code[maxh];
+int maxlen[maxw];
+
+void cut(string& s, int rows)
+{
+    string word;
+    int i = 0, k = 0;
+    while(i < s.length() && s[i] == ' ') i++;
+    while(i < s.length())
+    {
+        while(i < s.length() && s[i] != ' ') word += s[i++];
+        while(i < s.length() && s[i] == ' ') i++;
+        code[rows].push_back(word);
+        maxlen[k] = max(maxlen[k], (int)word.length());
+        k++;
+        word = "";
+    }
+}
+
+int main()
+{
+    int rows = 0;
+    string s;
+    while(getline(cin, s))
+    {
+        cut(s, rows);
+        rows++;
+    }
+    int lastpos = 0;
+    int pos = 0;
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < code[i].size(); j++)
+        {
+            cout<<code[i][j];
+            if(j < code[i].size()-1)
+            {
+                lastpos = pos + code[i][j].length();
+                pos += maxlen[j] + 1;
+                for(int k = lastpos; k < pos; k++) cout<<' ';
+            }
+        }
+        cout<<endl;
+    }
+    return 0;
+}

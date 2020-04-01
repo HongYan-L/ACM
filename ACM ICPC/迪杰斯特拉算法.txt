@@ -1,0 +1,72 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+int main()
+{
+    cout << "Enter the points number of graph" << endl;
+    int n;
+    cin >> n;
+    int Amap[n+1][n+1];
+    for(int i = 1; i <= n; i++) {//初始化map
+        for(int j = 1; j <= n; j++) {
+            Amap[i][j] = 99999;
+        }
+    }
+    cout << "Enter the edges number of graph" << endl;
+    int m;
+    cin >> m;
+    cout << "Enter start and end of graph and length of edge" << endl;
+    int t1 = 0;
+    int t2 = 0;
+    int t3 = 0;
+    for(int j = 0; j < m; j++) {//更改t1到t2的长度
+        cin >> t1 >> t2 >> t3;
+        Amap[t1][t2] = t3;
+    }
+    int foot[n + 1];//记录顶点是否归到已确定的路径里面
+    memset(foot, 0, sizeof(foot));
+    foot[1] = 1;//默认从1开始
+    int dist[n + 1];//记录每个顶点所对应的最短特殊路径
+    for(int i = 1; i <= n; i++){
+        dist[i] = Amap[1][i];//初始化第一个顶点的dist数组
+    }
+    int as[n];// 用来记录经过的顶点顺序
+    memset(as, 0, sizeof(as));
+    as[0] = 1;//默认从一开始
+    int u;
+    for(int i = 1; i <= n-1; i++) {
+        int min = 99999;
+        for(int j = 1; j <= n; j++) {//获取到该顶点的最短路径对应的下一个顶点的位置u
+            if(foot[j] == 0 && dist[j] < min) {// foot为0表示还没走过
+                min = dist[j];
+                u = j;
+            }
+        }
+        foot[u] = 1;//设置为一，表示已经选取
+        as[i] = u;//记录下来该顶点
+        for(int k = 1; k <= n; k++) {//更新当前的dist数组
+            if(Amap[u][k] < 99999) {//表示顶点之间有路径
+                if(dist[k] > dist[u] + Amap[u][k]) {//当前该顶点的dist不是最短的则更新
+                	dist[k] = dist[u] + Amap[u][k];
+            	}
+            }
+        }
+
+    }
+    cout << "the shortst road past the point is"<<endl;
+    for(int i = 0; i < n; i++){
+        cout <<  as[i] << " ";
+    }
+    cout << endl;
+    cout << "the length form 1 point to other is" << endl;
+    for(int i = 1; i <= n; i++){
+    if(dist[i] == 99999){
+        cout << "from 1 to" << i << "length is" << "-" << endl;
+        continue;
+    }
+        cout << "from 1 to" << i << "length is" << dist[i] << endl;
+    }
+    return 0;
+}

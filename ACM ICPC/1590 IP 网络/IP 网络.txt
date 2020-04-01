@@ -1,0 +1,71 @@
+#include<stdio.h>
+#include<string.h>
+#include<algorithm>
+using namespace std;
+int ip[10][1200], yanma[10] = {255, 254, 252, 248, 240, 224, 192, 128, 0};
+int mark, p, i, j;
+int main()
+{
+	int t;
+	while(~scanf("%d", &t))
+	{
+		memset(ip, 0, sizeof(ip));
+		for(i = 1; i <= t; i++)
+		{
+			scanf("%d.%d.%d.%d", &ip[1][i], &ip[2][i], &ip[3][i], &ip[4][i]);
+		}
+		int diff = 0;
+		for(p = 1; p <= 4; p++)
+		{
+			for(j = 1; j < t; j++)
+			{
+				if(ip[p][j] != ip[p][j+1])
+				{
+					diff = 1;
+					break;
+				}
+			}
+			if(diff)
+				break;
+		}
+		int temp = p;
+		if(t == 1 && !diff)
+		{
+			printf("%d.%d.%d.%d\n255.255.255.255\n", ip[1][1], ip[2][1], ip[3][1], ip[4][1]);
+			continue;
+		}
+		sort(ip[temp]+1, ip[temp]+1+t);
+		int mi = ip[temp][1];
+		int ma = ip[temp][t];
+		for(i = 1; i <= 8; i++)
+		{
+			if((mi % 2) != (ma % 2))
+				mark = i;
+			mi /= 2;
+			ma /= 2;
+		}
+		int tip[8], tyanma[8];
+		for(i = 1; i <= 4; i++)
+		{
+			if(i < temp)
+			{
+				tip[i] = ip[i][1];
+				tyanma[i] = yanma[0];
+			}
+			if(i == temp)
+			{
+				tip[i] = yanma[mark] & ip[temp][1];
+				tyanma[i] = yanma[mark];
+			}
+		    if(i > temp)
+		    {
+		    	tip[i] = 0;
+		    	tyanma[i] = 0;
+		    }
+		}
+		printf("%d.%d.%d.%d\n%d.%d.%d.%d\n", tip[1], tip[2], tip[3], tip[4], tyanma[1], tyanma[2], tyanma[3], tyanma[4]);
+		memset(tip, 0, sizeof(tip));
+		memset(tyanma, 0, sizeof(tyanma));
+	}
+	return 0;
+}

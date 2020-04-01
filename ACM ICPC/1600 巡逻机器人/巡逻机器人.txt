@@ -1,0 +1,69 @@
+#include<iostream>
+#include<queue>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+const int maxm = 1000 + 5;
+const int maxn = 20 + 5;
+int wangge[maxm][maxn], d[maxm][maxn][maxn];
+int m, n, K;
+struct Node{
+	int x, y, k;
+	Node(int x, int y, int k) : x(x), y(y), k(k) {}
+};
+const int dm[] = {0, 1, 0, -1};
+const int dn[] = {1, 0, -1, 0};
+void bfs()
+{
+	queue<Node> q;
+	d[1][1][0] = 0;
+	q.push(Node(1, 1, 0));
+	while(!q.empty())
+	{
+		Node u = q.front();
+		q.pop();
+		for(int i = 0; i < 4; i++)
+		{
+			int xx = u.x + dm[i];
+			int yy = u.y + dn[i];
+			if(xx >= 1 && xx <= m && yy >= 1 && yy <= n)
+			{
+				Node v(xx, yy, u.k);
+				if(wangge[xx][yy] == 1 && v.k + 1 <= K && d[xx][yy][v.k + 1] == -1)
+				{
+					v.k++;
+					d[xx][yy][v.k] = d[u.x][u.y][u.k] + 1;
+					q.push(v);
+				}
+				else if(wangge[xx][yy] == 0 && d[xx][yy][0] == -1)
+				{
+					d[xx][yy][0] = d[u.x][u.y][u.k] + 1;
+					v.k = 0;
+					q.push(v);
+				}
+			}
+		}
+	}
+}
+int main()
+{
+	int t;
+	scanf("%d ", &t);
+	while(t--)
+	{
+		memset(d, -1, sizeof(d));
+		scanf("%d%d", &m, &n);
+		scanf("%d", &K);
+		for(int i = 1; i <= m; i++)
+		{
+			for(int j = 1; j <= n; j++)
+			{
+				scanf("%d", &wangge[i][j]);
+			}
+		}
+		bfs();
+		printf("%d\n", d[m][n][0]);
+	}
+	return 0;
+}

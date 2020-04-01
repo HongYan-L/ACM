@@ -1,0 +1,70 @@
+#include<iostream>
+#include<string>
+#include<stack>
+#include<vector>
+using namespace std;
+struct PILES{
+	char suit;
+	char rank;
+	PILES(char s, char r) : suit(s), rank(r) {}
+};
+bool judge(PILES a, PILES b)
+{
+	if(a.suit == b.suit || a.rank == b.rank)
+		return true;
+	return false;
+}
+int main()
+{
+	int i;
+	char c[3];
+	bool flag = true;
+	vector<stack<PILES> > cards;
+	while(scanf("%s", c) == 1 && c[0] != '#')
+	{
+		stack<PILES> p;
+		PILES pi(c[0], c[1]);
+		p.push(pi);
+		cards.push_back(p);
+		if(cards.size() == 52)
+		{
+			while(flag)
+			{
+				flag = false;
+				for(i = 0; i < cards.size(); i++)
+				{
+					if(i > 2 && judge(cards[i].top(), cards[i - 3].top()))
+					{
+						cards[i - 3].push(cards[i].top());
+						cards[i].pop();
+						flag = true;
+						if(cards[i].empty())
+							cards.erase(cards.begin() + i);
+						break;
+					}
+					if(i > 0 && judge(cards[i].top(), cards[i - 1].top()))
+					{
+						cards[i - 1].push(cards[i].top());
+						cards[i].pop();
+						flag = true;
+						if(cards[i].empty())
+							cards.erase(cards.begin() + i);
+						break;
+					}
+				}
+			}
+			if(cards.size() == 1)
+				cout<<cards.size()<<" pile remaining: ";
+			else
+				cout<<cards.size()<<" piles remaining: ";
+			for(i = 0; i < cards.size(); i++)
+			{
+				cout<<" "<<cards[i].size();
+			}
+			cout<<endl;
+			cards.clear();
+			flag = true;
+		}
+	}
+	return 0;
+}

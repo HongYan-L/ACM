@@ -1,0 +1,24 @@
+#include<iostream>
+#include<cstring>
+using namespace std;
+int main()
+{
+	string c;
+	int score = 1;
+	int sum = 0;
+	cin>>c;
+	for(unsigned int i = 0; i < c.length(); i++)
+	{
+		if(c[i] == 'O')
+		{
+			sum += score;
+			score++;
+		}
+		if(c[i] == 'X')
+		{
+			score = 1;
+		}
+	}
+	cout<<sum<<endl;
+	return 0;
+}

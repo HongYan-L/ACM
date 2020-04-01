@@ -1,0 +1,65 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <cassert>
+
+using namespace std;
+
+const int maxn = 100 + 5;
+
+long long v[maxn], ans[maxn];
+int a, b, maxd;// a / b
+
+long long gcd(int a, int b) {
+	return b == 0 ? a : gcd(b, a % b);
+}
+
+inline int get_first(long long a, long long b) {// 返回满足1/c <= a/b的最小c
+	return b / a + 1;
+}
+
+bool better(int d) {
+	for(int i = d; i >= 0; i--) if(v[i] != ans[i]) {
+		return ans[i] == -1 || v[i] < ans[i];
+	}
+	return false;
+}
+
+bool dfs(int d, int from, long long aa, long long bb) {
+	if(d == maxd) {
+		if(bb % aa) return false;
+		v[d] = bb / aa;
+		if(better(d)) memcpy(ans, v, sizeof(long long) * (d + 1));
+		return true;
+	}
+	bool ok = false;
+	from = max(from, get_first(aa, bb));
+	for(int i = from; ; i++) {
+		if(bb * (maxd + 1 - d) <= i * aa) break;// 剪枝：如果剩下的maxd+1-d个分数全部都是1/i，加起来仍然不超过aa/bb，则无解
+		v[d] = i;
+		long long b2 = bb * i;
+		long long a2 = aa * i - bb;
+		long long g = gcd(a2, b2);// 计算aa/bb - 1/i，设结果为a2/b2
+		if(dfs(d + 1, i + 1, a2 / g, b2 / g)) ok = true;
+	}
+	return ok;
+}
+
+int main() {
+	int kase = 0;
+	while(cin >> a >> b) {
+		int ok = 0;
+		for(maxd = 1; maxd <= 100; maxd++) {
+			memset(ans, -1, sizeof(ans));
+			if(dfs(0, get_first(a, b), a, b)) { ok = 1; break; }
+		}
+		cout << "Case " << ++kase << ": ";
+		if(ok) {
+			cout << a << "/" << b << "=";
+			for(int i = 0; i < maxd; i++) cout << "1/" << ans[i] << "+";
+			cout << "1/" << ans[maxd] << "\n";
+		} else cout << "No solution.\n";
+	}
+	return 0;
+}

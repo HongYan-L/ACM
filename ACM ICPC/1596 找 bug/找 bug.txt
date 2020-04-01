@@ -1,0 +1,130 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+map<string, long long> array_length;
+map<string, map<long long, long long> > array_value;
+
+void p(string s, string& left, string& right)
+{
+	int index = s.find_first_of('=', 0);
+	if(index == -1)
+	{
+		left = s;
+		right = "";
+	}
+	else
+	{
+		left = s.substr(0, index);
+		right = s.substr(index + 1);
+	}
+}
+
+void getarray(string str, string& name, string& value)
+{
+	int bg = str.find_first_of('[', 0);
+	int ed = str.find_last_of(']');
+	if(bg == -1)
+	{
+		name = "";
+		value = str;
+	}
+	else
+	{
+		name = str.substr(0, bg);
+		value = str.substr(bg + 1, ed - bg - 1);
+	}
+}
+
+long long calculatearray(string str)
+{
+	string name, value;
+	getarray(str, name, value);
+	stack<string> s;
+	long long t;
+	while(name != "")
+	{
+		string left, right;
+		getarray(value, left, right);
+		if(!array_length.count(name))
+		{
+			return -1;
+		}
+		value = right;
+		s.push(name);
+		name = left;
+	}
+	t = atoi(value.c_str());
+	if(t < 0)
+		return -1;
+	while(!s.empty())
+	{
+		string left = s.top();
+		long long n = array_length[left];
+		if(t >= n)
+			return -1;
+		if(!array_value[left].count(t))
+			return -1;
+		t = array_value[left][t];
+		s.pop();
+	}
+	return t;
+}
+
+int main()
+{
+	string str;
+	int num = 0;
+	bool isfirst = true, flag = false;
+	while(cin>>str)
+	{
+		if(str != ".")
+		{
+			flag = false;
+			num++;
+			string left, right;
+			p(str, left, right);
+			if(right == "")
+			{
+				string name, value;
+				getarray(left, name, value);
+				array_length[name] = atoi(value.c_str());
+			}
+			else
+			{
+				string name, value;
+				long long temp, ans;
+				getarray(left, name, value);
+				temp = calculatearray(value);
+				ans = calculatearray(right);
+				if(temp >= 0 && temp < array_length[name] && ans != -1)
+				{
+					array_value[name][temp] = ans;
+				}
+				else
+				{
+					if(isfirst)
+					{
+						cout<<num<<endl;
+						isfirst = false;
+					}
+				}
+			}
+		}
+		else
+		{
+			array_length.clear();
+			array_value.clear();
+			if(flag)
+				break;
+			else
+			{
+				if(isfirst)
+					cout<<0<<endl;
+				flag = true;
+				isfirst = true;
+				num = 0;
+			}
+		}
+	}
+	return 0;
+}

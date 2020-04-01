@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+void swap(int* a, int* b)
+{
+	int t = *a; *a = *b; *b = t;
+}
+int main()
+{
+	int m, n, kase = 0;
+	while(scanf("%d%d", &m, &n) == 2 && m && n)
+	{
+		kase++;
+		int a[m*n+1], water, tot = m*n, count = 0;
+		float wl, tl = 0.0;
+		for(int i = 1; i <= tot; i++)
+		{
+			scanf("%d", &a[i]);
+			for(int j = i; j > 1; j--)
+			{
+				if(a[j] < a[j-1])
+					swap(&a[j], &a[j-1]);
+				else
+					break;
+			}
+		}
+		scanf("%d", &water);
+		for(int i = 1; i < tot; i++)
+		{
+			if(i == 1)
+			{
+				count++;
+				tl = a[1] * 100.0;
+				wl = (water + tl) * 1.0 / (100 * count);
+			}
+			else if(a[i] < wl)
+			{
+				count++;
+				tl += a[i] * 100.0;
+				wl = (water + tl) * 1.0 / (100 * count);
+			}
+			else
+				break;
+		}
+		printf("Region %d\n", kase);
+		printf("Water level is %.2f meters.\n", wl);
+		printf("%.2f percent of the region is under water.\n", count * 100.0 / tot);
+	}
+	return 0;
+}

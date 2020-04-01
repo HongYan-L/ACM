@@ -1,0 +1,268 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<iostream>
+using namespace std;
+
+int qinum, jx, jy;
+int qi[11][11];
+int cannot[11][11];
+int c[10][3];
+
+void C(int, int);
+void G(int, int);
+void H(int, int);
+void R(int, int);
+int J(int, int);
+int F(int, int, int, int);
+
+int main(){
+	while(cin>>qinum && cin>>jx && cin>>jy && qinum){
+		memset(qi, 0, sizeof(qi));
+		memset(cannot, 0, sizeof(cannot));
+		for(int i = 0; i < qinum; i++){
+			scanf("%s%d%d", &c[i][0], &c[i][1], &c[i][2]);
+		}
+		for(int i = 0; i < qinum; i++)
+			qi[c[i][1]][c[i][2]] = 1;
+		for(int i = 0; i < qinum; i++){
+			if(c[i][0] == 'G') G(c[i][1], c[i][2]);
+			else if(c[i][0] == 'C') C(c[i][1], c[i][2]);
+			else if(c[i][0] == 'H') H(c[i][1], c[i][2]);
+			else if(c[i][0] == 'R') R(c[i][1], c[i][2]);
+		}
+		if(J(jx, jy))
+			cout<<"Yes"<<endl;
+		else
+			cout<<"No"<<endl;
+	}
+	return 0;
+}
+
+void H(int x, int y){
+	if(y - 1 > 0 && !qi[x][y - 1]){
+		if(x - 1 > 0 && y - 2 > 0){
+			cannot[x - 1][y - 2] = 1;
+		}
+		if(x + 1 < 11 && y - 2 > 0){
+			cannot[x + 1][y - 2] = 1;
+		}
+	}
+	if(x - 1 > 0 && !qi[x - 1][y]){
+		if(x - 2 > 0 && y - 1 > 0){
+			cannot[x - 2][y - 1] = 1;
+		}
+		if(x - 2 > 0 && y + 1 < 10){
+			cannot[x - 2][y + 1] = 1;
+		}
+	}
+	if(y + 1 < 10 && !qi[x][y + 1]){
+		if(x - 1 > 0 && y + 2 < 11){
+			cannot[x - 1][y + 2] = 1;
+		}
+		if(x + 1 < 11 && y + 2 < 11){
+			cannot[x + 1][y + 2] = 1;
+		}
+	}
+	if(x + 1 < 11 && !qi[x + 1][y]){
+		if(x + 2 < 12 && y - 1 > 0){
+			cannot[x + 2][y - 1] = 1;
+		}
+		if(x + 2 < 12 && y + 1 < 10){
+			cannot[x + 2][y + 1] = 1;
+		}
+	}
+}
+
+void G(int x, int y){
+	for(int i = x - 1; i >= 1; i--){
+		if(!qi[i][y]){
+			cannot[i][y] = 1;
+		}
+		else{
+			qi[i][y] = 1;
+			break;
+		}
+	}
+}
+
+void R(int x, int y){
+	if(x >= 1 && x <= 3 && y < 4){
+		for(int i = y + 1; i <= 6; i++){
+			if(!qi[x][i]){
+				cannot[x][i] = 1;
+			}
+			else{
+				cannot[x][i] = 1;
+				break;
+			}
+		}
+	}
+	if(x >= 1 && x <= 3 && y > 6){
+		for(int i = y - 1; i >= 4; i--){
+			if(!qi[x][i]){
+				cannot[x][i] = 1;
+			}
+			else{
+				cannot[x][i] = 1;
+				break;
+			}
+		}
+	}
+	if(x > 3 && y >= 4 && y <= 6){
+		for(int i = x - 1; i >= 1; i--){
+			if(!qi[i][y]){
+				cannot[i][y] = 1;
+			}
+			else{
+				cannot[i][y] = 1;
+				break;
+			}
+		}
+	}
+	if(x >= 1 && x <= 3 && y >= 4 && y <= 6){
+		for(int i = y + 1; i <= 6; i++){
+			if(!qi[x][i]){
+				cannot[x][i] = 1;
+			}
+			else{
+				cannot[x][i] = 1;
+				break;
+			}
+		}
+		for(int i = y - 1; i >= 4; i--){
+			if(!qi[x][i]){
+				cannot[x][i] = 1;
+			}
+			else{
+				cannot[x][i] = 1;
+				break;
+			}
+		}
+		for(int i = x + 1; i <= 3; i++){
+			if(!qi[i][y]){
+				cannot[i][y] = 1;
+			}
+			else{
+				cannot[i][y] = 1;
+				break;
+			}
+		}
+		for(int i = x - 1; i >= 1; i--){
+			if(!qi[i][y]){
+				cannot[i][y] = 1;
+			}
+			else{
+				cannot[i][y] = 1;
+				break;
+			}
+		}
+	}
+}
+
+int F(int z, int w, int p, int q)//z == 1 ×ÝÏò
+{
+	if(z == 0)
+	{
+		if(p < q)
+		{
+			for(int j = p; j <= q; j++){
+				for(int k = 0; k < qinum; k++){
+					if(c[k][1] == w && c[k][2] == j)
+						return j;
+					return 0;
+				}
+			}
+		}
+		else
+		{
+			for(int j = p; j >= q; j--){
+				for(int k = 0; k < qinum; k++){
+					if(c[k][1] == w && c[k][2] == j)
+						return j;
+					return 0;
+				}
+			}
+		}
+    }
+	if(z == 1)
+	{
+		if(p < q)
+		{
+			for(int j = p; j <= q; j++){
+				for(int k = 0; k < qinum; k++){
+					if(c[k][2] == w && c[k][1] == j)
+						return j;
+					return 0;
+				}
+			}
+		}
+	    else
+	    {
+	    	for(int j = p; j >= q; j--){
+			    for(int k = 0; k < qinum; k++){
+				    if(c[k][2] == w && c[k][1] == j)
+					    return j;
+				    return 0;
+				}
+			}
+		}
+	}
+}
+
+void C(int x, int y){
+	int cur;
+	if(x - 2 > 0){
+		if((cur = F(1, y, x - 1, 1)) != 0){
+			for(int i = cur - 1; i >= 1; i--)
+				if(!qi[i][y])
+					cannot[i][y] = 1;
+				else{
+					cannot[i][y] = 1;
+					break;
+				}
+		}
+	}
+	if(x + 2 < 12){
+		if((cur = F(1, y, x + 1, 11)) != 0){
+			for(int i = cur + 1; i <= 10; i++)
+				if(!qi[i][y])
+					cannot[i][y] = 1;
+				else{
+					cannot[i][y] = 1;
+					break;
+				}
+
+		}
+	}
+	if(y - 2 > 0){
+		if((cur = F(0, x, y - 1, 1)) != 0){
+			for(int i = cur - 1; i >= 1; i--)
+				if(!qi[x][i])
+					cannot[x][i] = 1;
+				else{
+					cannot[x][i] = 1;
+					break;
+				}
+		}
+	}
+	if(y + 2 < 11){
+		if((cur = F(0, x, y + 1, 9)) != 0){
+			for(int i = cur + 1; i <= 9; i++)
+				if(!qi[x][i])
+					cannot[x][i] = 1;
+				else{
+					cannot[x][i] = 1;
+					break;
+				}
+		}
+	}
+}
+
+int J(int x, int y){
+	if(x - 1 > 0 && !cannot[x - 1][y]) return 0;
+	if(x + 1 < 4 && !cannot[x + 1][y]) return 0;
+	if(y - 1 > 3 && !cannot[x][y - 1]) return 0;
+	if(y + 1 < 7 && !cannot[x][y + 1]) return 0;
+	return 1;
+}

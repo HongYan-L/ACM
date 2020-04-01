@@ -1,0 +1,139 @@
+#include<stdio.h>
+#include<string.h>
+#define maxn 1000+10
+#define INF 999
+int count;
+int wcount;
+int mcount;
+int p[100+10];
+
+struct morsecode{
+	char name;
+	char namecode[20];
+}morsecode[50];
+
+struct word{
+	char zimu[20];
+	char element[100];
+}word[100+10];
+
+struct morseword{
+	char contextcode[100];
+	char context[20];
+}morseword[maxn];
+
+void readcode(){
+	char c[20];
+	count = 0;
+	while(scanf("%s", c) && c[0] != '*')
+	{
+		morsecode[count].name = c[0];
+		scanf("%s", morsecode[count].namecode);
+		count++;
+	}
+}
+
+void readword(){
+	char c[20];
+	wcount = 0;
+	int i, j, len;
+	while(scanf("%s", c) && c[0] != '*')
+	{
+		strcpy(word[wcount].zimu, c);
+		len = strlen(c);
+		for(i = 0; i < len; i++)
+		{
+			for(j = 0; j < count; j++)
+			{
+				if(c[i] == morsecode[j].name)
+				{
+					strcat(word[wcount].element, morsecode[j].namecode);
+					break;
+				}
+			}
+		}
+		wcount++;
+	}
+}
+
+void readmorseword(){
+	char c[100];
+	mcount = 0;
+	int i, j, k, fcount;
+	int mlen, wlen, min;
+	while(scanf("%s", c) && c[0] != '*')
+	{
+		strcpy(morseword[mcount].contextcode, c);
+		fcount = 0;
+		for(i = 0; i < wcount; i++)
+		{
+			if(strcmp(word[i].element, c) == 0)
+			{
+				fcount++;
+				if(fcount == 1)
+				{
+					strcpy(morseword[mcount].context, word[i].zimu);
+				}
+				else
+				{
+					strcat(morseword[mcount].context, "!");
+					break;
+				}
+			}
+		}
+		if(fcount == 0)
+		{
+			memset(p, 0, sizeof(p));
+			mlen = strlen(c);
+			for(int i = 0; i < wcount; i++)
+			{
+				k = 0;
+				wlen = strlen(word[i].element);
+				for(j = 0; j < mlen; j++)
+				{
+					if(j <= wlen)
+					{
+						if(word[i].element[j] == morseword[mcount].contextcode[j])
+							k++;
+					}
+					else
+						break;
+				}
+				if(k == mlen)
+					p[i] = wlen - mlen;
+				else if(k < mlen && k == wlen)
+					p[i] = mlen - wlen;
+				else
+					p[i] = INF;
+			}
+			min = p[0];
+			j = 0;
+			for(i = 0; i < wcount; i++)
+			{
+				if(p[i] < min)
+				{
+					min = p[i];
+					j = i;
+				}
+			}
+			strcpy(morseword[mcount].context, word[j].zimu);
+			strcat(morseword[mcount].context, "?");
+		}
+		mcount++;
+	}
+}
+
+void printword(){
+	int i;
+	for(i = 0; i < mcount; i++)
+		printf("%s\n", morseword[i].context);
+}
+
+int main()
+{
+	readcode();
+	readword();
+	readmorseword();
+	printword();
+	return 0;
+}

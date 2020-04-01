@@ -1,0 +1,76 @@
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+	char c[11][11];
+	int num[11][11];
+	int row, column, i, j, number = 1;
+	while(~scanf("%d", &row) && row)
+	{
+		scanf("%d", &column);
+		for(i = 0; i < row; i++)
+		{
+			scanf("%s", c[i]);
+		}
+	}
+	int n = 1;
+	memset(num, 0, sizeof(num));
+	for(i = 0; i < row; i++)
+	{
+		for(j = 0; j < column; j++)
+		{
+			if((i == 0 || j == 0 || c[i][j-1] == '*' || c[i-1][j] == '*') && c[i][j] != '*')
+			{
+				num[i][j] = n++;
+			}
+		}
+	}
+	printf("puzzle #%d:\n", number++);
+	printf("Across");
+	for(i = 0; i < row; i++)
+	{
+		int flag = 1;
+		for(j = 0; j < column; j++)
+		{
+			if(c[i][j] != '*')
+			{
+				if(flag)
+				{
+					printf("\n %2d.", num[i][j]);
+					printf("%c", c[i][j]);
+					flag = 0;
+				}
+				else
+			    {
+				    printf("%c", c[i][j]);
+			    }
+			}
+			if(c[i][j] == '*' || j == column-1)
+			{
+				flag = 1;
+			}
+		}
+	}
+	printf("\nDown\n");
+	for(i = 0; i < row; i++)
+	{
+		for(j = 0; j < column; j++)
+		{
+			if(num[i][j] == 0 || c[i][j] == '*')
+			{
+				continue;
+			}
+			printf("%3d.%c", num[i][j], c[i][j]);
+			num[i][j] = 0;
+			int k = i+1;
+			while(k < row && c[k][j] != '*')
+			{
+				printf("%c", c[k][j]);
+				num[k][j] = 0;
+				k++;
+			}
+			printf("\n");
+		}
+	}
+	return 0;
+}

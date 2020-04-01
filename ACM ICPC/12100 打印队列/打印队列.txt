@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+bool cmp(const deque<int> &dq)
+{
+    int k = 0;
+    for(int i = 1; i < dq.size(); i++)
+    {
+        if(dq[0] >= dq[i])
+            k++;
+    }
+    if(k == dq.size() - 1)
+        return true;
+    else
+        return false;
+}
+
+int main()
+{
+    deque<int> dq;
+    int T;
+    scanf("%d", &T);
+    while(T--)
+    {
+        dq.clear();
+        int l, p, x;
+        scanf("%d%d", &l, &p);
+        for(int i = 0; i < l; i++)
+        {
+            scanf("%d", &x);
+            dq.emplace_back(x);
+        }
+        int t = 0;
+        int temp = p;
+        while(temp > -1)
+        {
+            int a = dq[0];
+            temp--;
+            int s = dq.size();
+            if(cmp(dq))
+            {
+                t++;
+                dq.pop_front();
+                continue;
+            }
+            else
+            {
+                dq.pop_front();
+                dq.emplace_back(a);
+                if(temp == -1){
+                    temp += s;
+                }
+            }
+        }
+        printf("%d\n", t);
+    }
+    return 0;
+}

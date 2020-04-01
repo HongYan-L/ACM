@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n, m, tid[25], num[25], t0[25], t[25], dt[25], pid[8], k[8], ptid[8][25], shengyu[25];
+int chulitime[8], chulizl[8], weichuli[25], ti;
+map<int, int> pq;
+bool cmp(int a, int b)
+{
+	if(chulitime[a] != chulitime[b]) return chulitime[a] > chulitime[b];
+	else return pid[a] < pid[b];
+}
+
+int main()
+{
+	int cnt = 1;
+	while(cin>>n)
+	{
+		if(!n) break;
+		pq.clear();
+		for(int i = 0; i < n; i++) cin>>tid[i]>>num[i]>>t0[i]>>t[i]>>dt[i], shengyu[i] = num[i], pq[tid[i]] = i;
+		cin>>m;
+		for(int i = 0; i < m; i++)
+		{
+			cin>>pid[i]>>k[i];
+			for(int j = 0; j < k[i]; j++) cin>>ptid[i][j];
+		}
+		memset(weichuli, 0, sizeof(weichuli));
+		memset(chulitime, 0, sizeof(chulitime));
+		for(int i = 0; i < m; i++) chulizl[i] = -1;
+		ti = 0;
+		while(1)
+		{
+			int flag = 1;
+			for(int i = 0; i < n; i++) if(shengyu[i] || weichuli[i]) {flag = 0; break;}
+			for(int i = 0; i < m; i++)
+			{
+				if(chulizl[i] == -1) continue;
+				int temp = pq[chulizl[i]];
+				if(chulitime[i] < t[temp]) {flag = 0; break;}
+			}
+			if(flag) break;
+			for(int i = 0; i < n; i++) if(ti>= t0[i] && (ti - t0[i])%dt[i] == 0 && shengyu[i]) ++weichuli[i], --shengyu[i];
+			int tmp[8];
+			for(int i = 0; i < m; i++) tmp[i] = i;
+			sort(tmp, tmp + m, cmp);
+			for(int i = 0; i < m; i++)
+			{
+				int sy = tmp[i];
+				if(chulizl[sy] != -1 && chulitime[sy] < t[pq[chulizl[sy]]]) {++chulitime[sy]; continue;}
+				for(int j = 0; j < k[sy]; j++)
+				{
+					int pos = pq[ptid[sy][j]];
+					if(weichuli[pos] > 0)
+					{
+						--weichuli[pos];
+						chulizl[sy] = tid[pos];
+						chulitime[sy] = 1;
+						break;
+					}
+				}
+			}
+			++ti;
+		}
+		printf("Scenario %d: All requests are serviced within %d minutes.\n", cnt++, ti);
+	}
+	return 0;
+}

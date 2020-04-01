@@ -1,0 +1,43 @@
+#include<iostream>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+
+const int maxn = 128 + 10;
+int leaves[maxn];
+
+int main()
+{
+	int n, m, len1, len2, kase = 0;
+	while(scanf("%d", &n) == 1 && n)
+	{
+		char c1[maxn];
+		for(int i = 0; i < n; i++)
+			scanf("%s", c1);
+		scanf("%s", c1);
+		len1 = strlen(c1);
+		memset(leaves, 0, sizeof(leaves));
+		for(int i = 0; i < len1; i++)
+		{
+			leaves[(1<<n) + i] = c1[i] - '0';
+		}
+		char c3[maxn];
+		scanf("%d", &m);
+		int j = 0;
+		while(m--)
+		{
+			scanf("%s", c1);
+			len2 = strlen(c1);
+			int k = 1;
+			for(int i = 0; i < len2; i++)
+			{
+				if(c1[i] == '0') k *= 2;
+				else k = k * 2 + 1;
+			}
+			c3[j++] = leaves[k] + 48;
+		}
+		c3[j] = 0;
+		printf("S-Tree #%d:\n%s\n\n", ++kase, c3);
+	}
+	return 0;
+}

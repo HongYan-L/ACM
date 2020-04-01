@@ -1,0 +1,91 @@
+#include<bits/stdc++.h>
+using namespace std;
+const double eps = 1e-5;
+class maps{//定义地图类 
+public:
+	string name;
+	double ratio, area, cx, cy, x1, x2, y1, y2, w, h;
+};
+class loca{//定义地点类 
+public:
+	string name;
+	double cx, cy;
+};
+vector<maps> pq;//存地图信息
+map<string,int> p1;//地图名称到地图存储位置的映射 
+map<string,int> p2;//地点到其存储位置的映射 
+vector<vector<string> > op;//存包含该地点的地图名称 
+vector<loca> location;//存地点信息
+string goal;//代表当前要查询的地点 
+bool cmp(string a, string b){//比较两个地图的先后顺序 
+	maps a1 = pq[p1[a]], b1 = pq[p1[b]];//a，b对应的地图信息 
+	loca p = location[p2[goal]];//当前地点的信息 
+	double dis1 = (a1.cx-p.cx) * (a1.cx-p.cx) + (a1.cy-p.cy) * (a1.cy-p.cy);//地点到地图a中心距离 
+	double dis2 = (b1.cx-p.cx) * (b1.cx-p.cx) + (b1.cy-p.cy) * (b1.cy-p.cy);//地点到地图b中心距离 
+	double r1 = fabs(a1.ratio-0.75), r2 = fabs(b1.ratio-0.75);//比例与0.75的差 
+	double rt1 = (a1.cx+a1.w/2-p.cx) * (a1.cx+a1.w/2-p.cx) + (a1.cy-a1.h/2-p.cy) * (a1.cy-a1.h/2-p.cy);//地点和右下角距离 
+	double rt2 = (b1.cx+b1.w/2-p.cx) * (b1.cx+b1.w/2-p.cx) + (b1.cy-b1.h/2-p.cy) * (b1.cy-b1.h/2-p.cy);
+	if(fabs(a1.area-b1.area) > eps) return a1.area > b1.area;
+	else if(fabs(dis1-dis2) > eps) return dis1 < dis2;
+	else if(fabs(r1-r2) > eps) return r1 < r2;
+	else if(fabs(rt1-rt2) > eps) return rt1 > rt2;
+	else return min(a1.x1, a1.x2) < min(b1.x1, b1.x2);
+}
+int main()
+{
+	string tmp;
+	cin>>tmp; 
+	while(cin>>tmp){
+		if(tmp == "LOCATIONS") break;
+		maps yu;
+		yu.name = tmp;
+		cin>>yu.x1>>yu.y1>>yu.x2>>yu.y2;
+		yu.w = abs(yu.x1-yu.x2); yu.h = abs(yu.y1-yu.y2);//求地图的宽和高 
+		yu.cx = (yu.x1 + yu.x2)/2.0; yu.cy = (yu.y2 + yu.y1)/2.0;//求地图的中心 
+		yu.ratio = yu.h*1.0/yu.w; yu.area = yu.h*yu.w;//求地图的比例 
+		pq.push_back(yu);
+		p1[tmp] = pq.size()-1;	
+	}
+	while(cin>>tmp){
+		if(tmp == "REQUESTS") break;
+		loca hj;
+		hj.name = tmp; cin>>hj.cx>>hj.cy;
+		location.push_back(hj);
+		p2[tmp] = op.size();
+		vector<string> gh;
+		for(int i = 0; i < pq.size(); ++i){
+			double a1 = hj.cx, a2 = min(pq[i].x1,pq[i].x2), a3 = max(pq[i].x1,pq[i].x2);
+			double b1 = hj.cy, b2 = min(pq[i].y1,pq[i].y2), b3 = max(pq[i].y1,pq[i].y2);
+			if((a1>a2 || fabs(a1-a2)<eps) && (a3>a1||fabs(a1-a3)<eps) && (b1>b2||fabs(b1-b2)<eps) && (b3>b1||fabs(b1-b3)<eps))
+				gh.push_back(pq[i].name);
+		}
+		op.push_back(gh);
+	}
+	while(cin>>tmp){
+		if(tmp == "END") break;
+		int detail;
+		cin>>detail;
+		cout<<tmp<<" at detail level "<<detail;
+		if(!p2.count(tmp)){cout<<" unknown location\n"; continue;}//查不到地点的时候 
+		if(!op[p2[tmp]].size()){cout<<" no map contains that location\n"; continue;}//没有地图包含该地点的时候 
+		goal = tmp;
+		sort(op[p2[tmp]].begin(), op[p2[tmp]].end(), cmp); 
+		double last = -1; 
+		int rank = 0, pos = -1;//pos记录要求位置 
+		vector<int> ui;//细节等级序列 
+		for(int i = 0; i < op[p2[tmp]].size(); ++i){//对每一个地图标号细节等级 
+			double area = pq[p1[op[p2[tmp]][i]]].area;
+			if(fabs(area-last) > eps) ui.push_back(++rank);
+			else ui.push_back(rank);
+			if(rank == detail) pos = i;
+		}
+		if(pos != -1) cout<<" using "<<op[p2[tmp]][pos]<<endl;//如果有满足要求的地图时 
+		else{//如果不满足要求时 
+			int yu = ui[op[p2[tmp]].size()-1];
+			for(pos = op[p2[tmp]].size()-2; pos >= 0 && ui[pos] == yu; --pos);
+			++pos;
+			cout<<" no map at that detail level; using "<<op[p2[tmp]][pos]<<endl;
+		}
+	}
+	return 0;
+} 

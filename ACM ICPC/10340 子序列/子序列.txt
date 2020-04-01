@@ -1,0 +1,22 @@
+#include<iostream>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+int main()
+{
+	string s, t;
+	while(cin>>s>>t)
+	{
+		unsigned int n = 0;
+		for(unsigned int i = 0; i < t.length(); i++)
+		{
+			if(t[i] == s[n])
+				n++;
+		}
+		if(n == s.length())
+			printf("Yes\n");
+		else
+			printf("No\n");
+	}
+	return 0;
+}

@@ -1,0 +1,100 @@
+#include <vector>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+const int N = 61;
+
+int m, n;
+vector<int> square[N];
+bool st[N];
+
+bool check(vector<int> &sq)
+{
+	for(int i = 0; i < sq.size(); i++)
+		if(st[sq[i]])
+			return false;
+	return true;
+}
+
+int f()
+{
+	static bool state[N];
+	memcpy(state, st, sizeof(st));
+	int res = 0;
+	for(int i = 0; i < m; i++)
+	{
+		vector<int> &sq = square[i];
+		if(check(sq))
+		{
+			res++;
+			for(int j = 0; j < sq.size(); j++) st[sq[j]] = true;
+		}
+	}
+	memcpy(st, state, sizeof(st));
+	return res;
+}
+
+bool dfs(int depth, int max_depth)
+{
+	if(depth + f() > max_depth) return false;
+	for(int i = 0; i < m; i++)
+	{
+		vector<int> &sq = square[i];
+		if(check(sq))
+		{
+			for(int j = 0; j < sq.size(); j++)
+			{
+				int x = sq[j];
+				st[x] = true;
+				if(dfs(depth + 1, max_depth)) return true;
+				st[x] = false;
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+int main()
+{
+	int T;
+	scanf("%d", &T);
+	while(T--)
+	{
+		scanf("%d", &n);
+		m = 0;
+		memset(st, 0, sizeof(st));
+		for(int len = 1; len <= n; len++)
+			for(int a = 1; a + len - 1 <= n; a++)
+				for(int b = 1; b + len - 1 <= n; b++)
+				{
+					//auto &sq = square(m);
+					vector<int> &sq = square[m];
+					sq.clear();
+					int d = 2 * n + 1;
+					for(int i = 0; i < len; i++)
+					{
+						sq.push_back(1 + (a - 1) * d + b - 1 + i);
+						sq.push_back(1 + (a + len - 1) * d + b - 1 + i);
+						sq.push_back(n + 1 + (a - 1) * d + b - 1 + i * d);
+						sq.push_back(n + 1 + (a - 1) * d + b - 1 + i * d + len);
+					}
+					m++;
+				}
+		int k = 0;
+		scanf("%d", &k);
+		while(k--)
+		{
+			int x;
+			scanf("%d", &x);
+			st[x] = true;
+		}
+		int depth = 0;
+		while(!dfs(0, depth)) depth++;
+		printf("%d\n", depth);
+	}
+	return 0;
+}

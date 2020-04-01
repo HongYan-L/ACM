@@ -1,0 +1,53 @@
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+#include <stack>
+using namespace std;
+const int maxn = 1000 + 5;
+vector<int> node[maxn];
+int p[maxn];
+int main()
+{
+    ios::sync_with_stdio(false);
+    int t, x;
+    while(cin >> t)
+    {
+        for(int i = 1; i <= t; i++)
+        {
+            node[i].clear();
+            cin >> x;
+            p[x] = i;
+        }
+        stack<int> sta;
+        int root;
+        cin >> root;
+        sta.push(root);
+        for(int i = 1; i < t; i++)
+        {
+            cin >> x;
+            while(true)
+            {
+                int temp = sta.top();
+                if(temp == root || p[temp] + 1 < p[x])
+                {
+                    node[temp].push_back(x);
+                    sta.push(x);
+                    break;
+                }
+                else
+                {
+                    sta.pop();
+                }
+            }
+        }
+        for(int i = 1; i <= t; i++)
+        {
+            cout << i << ":";
+            for(int j = 0; j < node[i].size(); j++)
+                cout << " " << node[i][j];
+            cout << endl;
+        }
+    }
+    return 0;
+}

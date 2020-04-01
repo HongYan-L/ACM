@@ -1,0 +1,36 @@
+// UVa12186另一个危机
+//刘如家
+＃包括< cstdio >
+＃包括<矢量>
+＃包括<算法>
+使用 名称空间 std ;
+
+const  int maxn = 100000 + 5 ;
+int n，T；
+vector < int > sons [maxn];
+
+int  dp（int u）{
+  if（sons [u] 。empty（））返回 1 ;
+  int k = sons [u]。大小（）;
+  vector < int > d;
+  对于（int i = 0 ; i <k; i ++）
+    d。push_back（dp（sons [u] [i]））;
+  排序（d。开始（），d。端（））;
+  INT C =（K * T - 1）/ 100 + 1 ;
+  int ans = 0 ;
+  对于（int i = 0 ; i <c; i ++）ans + = d [i];
+  返回 ans;
+}
+
+int  main（）{
+  int f;
+  而（scanf（“％d％d ”，＆n，＆T）== 2 && n）{
+    for（int i = 0 ; i <= n; i ++）sons [i]。清除（）;
+    for（int i = 1 ; i <= n; i ++）{
+      scanf（“％d ”，＆f）;
+      儿子[f]。push_back（i）;
+    }
+    printf（“％d \ n ”，dp（0））;
+  }
+  返回 0 ;
+}

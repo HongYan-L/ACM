@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+#define maxn 400
+int main()
+{
+	int n;
+	int p = 0;
+	int a[15], b[15], c[15];
+	while(scanf("%d", &n) && n)
+	{
+		for(int i = 0; i < n; i++)
+		{
+			scanf("%d%d%d", &a[i], &b[i], &c[i]);
+		}
+		int xing, t;
+		for(t = 1; t < maxn; t++)
+		{
+			xing = 0;
+			for(int i = 0; i < n; i++)
+			{
+				if(c[i] <= a[i])
+					xing++;
+			}
+			if(xing == n)
+				break;
+			for(int i = 0; i < n; i++)
+			{
+				if(c[i] == a[i] + b[i] || (c[i] == a[i] && xing >= n - xing))
+					c[i] = 0;
+				c[i]++;
+			}
+		}
+		if(t == maxn)
+			t = -1;
+		printf("Case %d: %d\n", ++p, t);
+	}
+	return 0;
+}

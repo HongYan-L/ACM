@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    deque<int> d;
+    int n;
+    while(scanf("%d", &n) == 1 && n)
+    {
+        d.clear();
+        for(int i = 1; i <= n; i++)
+        {
+            d.push_back(i);
+        }
+        cout<<"Discarded cards:";
+        while(d.size() > 1)
+        {
+            if(d.size() == n)
+            {
+                cout<<" "<<d[0];
+            }
+            else
+            {
+                cout<<", "<<d[0];
+            }
+            d.pop_front();
+            d.push_back(d[0]);
+            d.pop_front();
+        }
+        cout<<endl;
+        cout<<"Remaining card: "<<d[0]<<endl;
+    }
+    return 0;
+}

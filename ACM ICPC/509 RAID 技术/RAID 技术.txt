@@ -1,0 +1,172 @@
+#include<bits/stdc++.h>
+int d, s, b;
+char disk[7][7000];
+char info[49000];
+int infocount;
+char content[49000];
+int contentcount;
+char parity;
+int main(){
+	int i, j, k;
+	int feixiaoyan;
+	int fxycount;
+	int onecount;
+	int kcase = 0;
+	int eoe;
+	int eop;
+	int eox;
+	int xiubu;
+	int temp;
+	char tempc;
+	char str[7];
+	while(scanf("%d", &d) && d){
+		scanf("%d%d", &s, &b);
+		scanf("%s", str);
+		parity = str[0];
+		for(i = 0; i < d; i++){
+			scanf("%s", disk[i]);
+		}
+		kcase++;
+		feixiaoyan = 0;
+		for(j = 0; j < b; j++){
+			for(k = 0; k < s; k++){
+				fxycount = 0;
+				for(i = 0; i < d; i++){
+					if(disk[i][j*s + k] == 'x'){
+						fxycount++;
+						if(fxycount >= 2){
+							feixiaoyan = 1;
+							break;
+						}
+					}
+				}
+				if(feixiaoyan == 1)
+					break;
+			}
+			if(feixiaoyan == 1)
+				break;
+		}
+		if(feixiaoyan == 1){
+			printf("Disk set %d is invalid.\n", kcase);
+			continue;
+		}
+		
+		if(parity == 'E')
+			eop = 0;
+		else
+			eop = 1;
+		eoe = 0;
+		for(j = 0; j < b; j++){
+			for(k = 0; k < s; k++){
+				onecount = 0;
+				eox = 0;
+				for(i = 0; i < d; i++){
+					if(disk[i][j*s + k] == '1'){
+						onecount++;
+					}
+					else if(disk[i][j*s + k] == 'x'){
+						eox = 1;
+					}
+				}
+				if(eox != 1 && onecount % 2 != eop){
+					eoe = 1;
+					break;
+				}
+			}
+			if(eoe == 1)
+				break;
+		}
+		if(eoe == 1){
+			printf("Disk set %d is invalid.\n", kcase);
+			continue;
+		}
+
+		for(j = 0; j < b; j++){
+			for(k = 0; k < s; k++){
+				onecount = 0;
+				xiubu = 0;
+				for(i = 0; i < d; i++){
+					if(disk[i][j*s + k] == '1'){
+						onecount++;
+					}
+					else if(disk[i][j*s + k] == 'x'){
+						xiubu = 1;
+						temp = i;
+					}
+				}
+				if(xiubu){
+					if(onecount % 2 == eop){
+						disk[temp][j*s + k] = '0';
+					}
+					else
+					{
+						disk[temp][j*s + k] = '1';
+					}
+				}
+			}
+		}
+		infocount = 0;
+		for(j = 0; j < b; j++){
+			for(i = 0; i < d; i++){
+				for(k = 0; k < s; k++){
+					if(j % d != i){
+						info[infocount] = disk[i][j*s + k];
+						infocount++;
+					}
+				}
+			}
+		}
+		if(infocount % 4 != 0){
+			k = 4 - infocount % 4;
+			for(i = 0; i < k; i++){
+				info[infocount] = '0';
+				infocount++;
+			}
+		}
+		info[infocount] = '\0';
+		contentcount = 0;
+		for(i = 0; i < infocount; i++){
+			if(i % 4 == 0){
+				k = 0;
+				k += (info[i] - '0') * 2 * 2 * 2;
+			}
+			else if(i % 4 == 1){
+				k += (info[i] - '0') * 2 * 2;
+			}
+			else if(i % 4 == 2){
+				k += (info[i] - '0') * 2;
+			}
+			else if(i % 4 == 3){
+				k += (info[i] - '0');
+				switch(k){
+					case 10:
+					tempc = 'A';
+					break;
+					case 11:
+					tempc = 'B';
+					break;
+					case 12:
+					tempc = 'C';
+					break;
+					case 13:
+					tempc = 'D';
+					break;
+					case 14:
+					tempc = 'E';
+					break;
+					case 15:
+					tempc = 'F';
+					break;
+					default:
+					tempc = k+'0';
+				}
+				content[contentcount] += tempc;
+                contentcount++;
+			}
+		}
+		content[contentcount] = '\0';
+		contentcount++;
+		printf("Disk set %d is valid, contents are: %s\n", kcase, content);
+	}
+	return 0;
+}

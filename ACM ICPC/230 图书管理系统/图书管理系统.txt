@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct book{
+    string author;
+    int status;
+};
+
+map<string, book> books;
+vector<string> bname;
+
+bool cmp(string a, string b)
+{
+    if(books[a].author == books[b].author) return a < b;
+    else return books[a].author < books[b].author;
+}
+
+int main()
+{
+    string str1, b, cmd, b1;
+    book bk;
+    while(getline(cin, str1))
+    {
+        if(str1 == "END") break;
+        b = str1.substr(0, str1.find_last_of("\"") + 1);
+        bk.author = str1.substr(str1.find_last_of("\"") + 1);
+        bname.push_back(b);
+        books[b] = bk;
+    }
+    sort(bname.begin(), bname.end(), cmp);
+    for(int i = 0; i < bname.size(); i++)
+    {
+        books[bname[i]].status = 1;
+    }
+    while(cin>>cmd)
+    {
+        if(cmd == "END") break;
+        if(cmd == "BORROW")
+        {
+            getchar();
+            getline(cin, b1);
+            books[b1].status = 0;
+        }
+        if(cmd == "RETURN")
+        {
+            getchar();
+            getline(cin, b1);
+            books[b1].status = -1;
+        }
+        if(cmd == "SHELVE")
+        {
+            for(int i = 0; i < bname.size(); i++)
+                if(books[bname[i]].status == -1)
+                {
+                    int j;
+                    for(j = i; j >= 0; j--)
+                        if(books[bname[j]].status == 1) break;
+                    if(j == -1) cout<<"Put "<<bname[i]<<" first"<<endl;
+                    else cout<<"Put "<<bname[i]<<" after "<<bname[j]<<endl;
+                    books[bname[i]].status = 1;
+                }
+            cout<<"END"<<endl;
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include<iostream>
+#include<string.h>
+using namespace std;
+int H[10][10], V[10][10];
+int dian, bian;
+int square(int);
+int main()
+{
+	int num = 1;
+	while(cin>>dian>>bian)
+	{
+		memset(H, 0, sizeof(H));
+	    memset(V, 0, sizeof(V));
+	    while(bian--)
+	    {
+	    	char hv;
+	    	int x, y;
+	    	cin>>hv>>x>>y;
+	    	if(hv == 'H')
+	    		H[x][y] = 1;
+	    	else
+	    		V[y][x] = 1;
+	    }
+	    int x;
+	    int flag = 0;
+	    if(num > 1)
+	    	cout<<"**********************************"<<endl<<endl;
+	    cout<<"Problem #"<<num++<<endl<<endl;
+	    for(int i = 1; i <= dian; i++)
+	    {
+	    	x = square(i);
+	    	if(x)
+	    	{
+	    		cout<<x<<" square (s) of size "<<i<<endl;
+	    		flag = 1;
+	    	}
+	    }
+	    if(!flag)
+	    	cout<<"No completed squares can be found."<<endl<<endl;
+	}
+	return 0;
+}
+int square(int n)
+{
+	int sqnum = 0, flag = 0;
+	for(int i = 1; i <= dian - n; i++)
+	{
+		for(int j = 1; j <= dian - n; j++)
+		{
+			for(int k = 0; k < n; k++)
+			{
+				if(H[i][j+k] && H[i+n][j+k] && V[i+k][j] && V[i+k][j+n])
+					flag = 1;
+				else
+				{
+					flag = 0;
+					break;
+				}
+			}
+			if(flag)
+				sqnum++;
+		}
+	}
+	return sqnum;
+}
